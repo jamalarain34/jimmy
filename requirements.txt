@@ -1,2 +1,2 @@
-streamlit
-Pillow
+flask
+yt-dlp
