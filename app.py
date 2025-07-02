@@ -1,8 +1,6 @@
-# flask_app_youtube.py
-from flask import Flask, render_template, request
-import yt_dlp
+# youtube_direct_url.py
 
-app = Flask(__name__)
+from yt_dlp import YoutubeDL
 
 def fetch_direct_video_url(youtube_url):
     ydl_opts = {
@@ -11,29 +9,24 @@ def fetch_direct_video_url(youtube_url):
         'forceurl': True,
         'format': 'best[ext=mp4]'
     }
+
     try:
-        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+        with YoutubeDL(ydl_opts) as ydl:
             info = ydl.extract_info(youtube_url, download=False)
             title = info.get("title", "No title")
             direct_url = info.get("url")
             return title, direct_url
     except Exception as e:
-        print("Error:", e)
+        print(f"❌ Error: {e}")
         return None, None
 
-@app.route('/', methods=['GET', 'POST'])
-def index():
-    title = None
-    video_url = None
-    error = None
+if __name__ == "__main__":
+    print("🎬 YouTube Video Direct Link Extractor")
+    youtube_url = input("🔗 Enter YouTube Video URL: ").strip()
+    title, video_url = fetch_direct_video_url(youtube_url)
 
-    if request.method == 'POST':
-        youtube_url = request.form.get('youtube_url')
-        title, video_url = fetch_direct_video_url(youtube_url)
-        if not video_url:
-            error = "❌ Could not extract video. Please check the URL."
-
-    return render_template('youtube.html', title=title, video_url=video_url, error=error)
-
-if __name__ == '__main__':
-    app.run(debug=True)
+    if video_url:
+        print(f"\n✅ Title: {title}")
+        print(f"🔗 Direct Stream URL: {video_url}")
+    else:
+        print("❌ Could not extract video URL.")
