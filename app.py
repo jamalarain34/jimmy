@@ -1,4 +1,3 @@
-# youtube_direct_url_streamlit.py
 import streamlit as st
 from yt_dlp import YoutubeDL
 
@@ -19,10 +18,10 @@ st.markdown("""
             text-align: center;
             font-size: 16px;
             margin-bottom: 30px;
-            color: #444;
+            color: green;
         }
         .stButton > button {
-            background-color: #f04e23;
+            background-color: #2ecc71;
             color: white;
             font-weight: bold;
             border: none;
@@ -31,14 +30,15 @@ st.markdown("""
             transition: 0.3s ease;
         }
         .stButton > button:hover {
-            background-color: #e5390d;
+            background-color: #27ae60;
+            color: white;
             transform: scale(1.03);
         }
         .result-box {
-            border: 2px solid #f04e23;
+            border: 2px solid #2ecc71;
             border-radius: 10px;
             padding: 20px;
-            background: #fff9f4;
+            background: #f0fff5;
             margin-top: 30px;
         }
     </style>
@@ -57,27 +57,29 @@ def fetch_direct_video_url(youtube_url):
             info = ydl.extract_info(youtube_url, download=False)
             title = info.get("title", "No title")
             direct_url = info.get("url")
-            return title, direct_url
+            thumbnail = info.get("thumbnail")
+            return title, direct_url, thumbnail
     except Exception as e:
-        return None, None
+        return None, None, None
 
 # ========== 🧠 Streamlit UI ==========
-st.markdown('<div class="title">🎬 YouTube Video Direct Link Tool</div>', unsafe_allow_html=True)
-st.markdown('<div class="desc">Paste your YouTube URL and get the direct video stream link.</div>', unsafe_allow_html=True)
+st.markdown('<div class="title">🎬 YouTube Video Downloader</div>', unsafe_allow_html=True)
+st.markdown('<div class="desc">Paste your YouTube URL and get the direct video stream link with thumbnail.</div>', unsafe_allow_html=True)
 
 youtube_url = st.text_input("🔗 Enter YouTube Video URL", placeholder="https://www.youtube.com/watch?v=...")
 
-if st.button("🎯 Get Direct Link"):
+if st.button("🎯 Get The Video"):
     if youtube_url:
         with st.spinner("🔍 Fetching video URL..."):
-            title, video_url = fetch_direct_video_url(youtube_url)
+            title, video_url, thumbnail = fetch_direct_video_url(youtube_url)
 
         if video_url:
             st.markdown(f"""
                 <div class='result-box'>
+                    <img src='{thumbnail}' width='100%' style='border-radius: 8px; margin-bottom: 15px;'>
                     <h4>✅ Title: {title}</h4>
                     <a href='{video_url}' target='_blank'>
-                        <button style='margin-top:10px;'>⬇️ Open Direct Video Link</button>
+                        <button style='margin-top:10px; background-color: #2ecc71;'>⬇️ Download Video Now</button>
                     </a>
                 </div>
             """, unsafe_allow_html=True)
